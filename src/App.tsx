@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-// Hàm tính toán người thắng
+// Define the winner
 function calculateWinner(squares: (string | null)[]) {
   const lines = [
     [0, 1, 2],
@@ -22,7 +22,6 @@ function calculateWinner(squares: (string | null)[]) {
   return null
 }
 
-// Component Square - Ô vuông
 function Square({
   value,
   onSquareClick,
@@ -32,6 +31,7 @@ function Square({
   onSquareClick: () => void
   isWinning: boolean
 }) {
+  // Highlight winning squares
   return (
     <button
       onClick={onSquareClick}
@@ -48,7 +48,6 @@ function Square({
   )
 }
 
-// Component Board
 function Board({
   xIsNext,
   squares,
@@ -70,12 +69,14 @@ function Board({
   }
 
   const isDraw = !winner && squares.every((sq) => sq !== null)
+  // Display winner or draw message
   const status = winner
     ? `Winner: ${winner}`
     : isDraw
     ? "Draw! No one wins"
     : `Player: ${xIsNext ? "X" : "O"}`
 
+  // Rewrite the Board to use two loops to make the squares instead of hardcoding  
   const board = []
   for (let r = 0; r < 3; r++) {
     const row = []
@@ -105,7 +106,6 @@ function Board({
   )
 }
 
-// Component chính
 export default function Game() {
   const [history, setHistory] = useState<Array<(string | null)[]>>([Array(9).fill(null)])
   const [currentMove, setCurrentMove] = useState(0)
@@ -124,7 +124,7 @@ export default function Game() {
     setCurrentMove(0)
   }
 
-  // Lấy vị trí nước đi (row, col)
+  // Calculate the location for each move in the format (row, col)
   function getMoveLocation(move: number): string {
     if (move === 0) return ""
     const prev = history[move - 1]
@@ -139,7 +139,7 @@ export default function Game() {
     return ""
   }
 
-  // Danh sách nước đi
+  // Sort the moves in either ascending or descending order
   const sorted = isAscending
     ? history.map((squares, move) => ({ squares, move }))
     : history
@@ -149,7 +149,7 @@ export default function Game() {
   const moves = sorted.map(({ move }) => {
     const location = getMoveLocation(move)
     const isActive = move === currentMove
-    // Xác định X hay O đã đi ở bước này
+    // Determine whether X or O made the move
     let player = ""
     if (move > 0) {
       const prevSquares = history[move - 1]
@@ -176,6 +176,7 @@ export default function Game() {
         <li key={move}>
           <div className="w-full flex items-center gap-2 px-4 py-2 rounded-md border bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold text-base">
             <span className="text-xl drop-shadow animate-spin inline-block align-middle">⭐</span>
+            {/* Show “You are at move #…”*/}
             <span className="leading-tight flex-1 flex items-center h-6">You are at move #{move} {location}</span>
           </div>
         </li>
@@ -214,7 +215,7 @@ export default function Game() {
           <div className="flex-1 flex flex-col items-center gap-4">
             <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
 
-            {/* Nút Restart */}
+            {/* Restart button */}
             <button
               onClick={handleRestart}
               className="mt-6 px-6 py-3 text-lg font-semibold bg-gradient-to-r from-indigo-500 to-blue-500 text-white border-indigo-700 
